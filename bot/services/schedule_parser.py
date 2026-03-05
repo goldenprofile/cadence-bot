@@ -2,6 +2,7 @@
 Parse reminder schedule strings and check if they fire at a given minute.
 
 Supported formats (case-insensitive):
+  hourly
   daily HH:MM
   MON HH:MM
   MON,WED,FRI HH:MM
@@ -17,6 +18,10 @@ _WEEKDAYS = {"MON": 0, "TUE": 1, "WED": 2, "THU": 3, "FRI": 4, "SAT": 5, "SUN": 
 def should_fire(schedule: str, now: datetime) -> bool:
     """Return True if the reminder should fire at `now` (checked at minute precision)."""
     parts = schedule.strip().upper().split()
+
+    if len(parts) == 1 and parts[0] == "HOURLY":
+        return now.minute == 0
+
     if len(parts) != 2:
         return False
 
@@ -43,6 +48,10 @@ def should_fire(schedule: str, now: datetime) -> bool:
 def is_valid_schedule(schedule: str) -> bool:
     """Return True if the schedule string is parseable."""
     parts = schedule.strip().upper().split()
+
+    if len(parts) == 1 and parts[0] == "HOURLY":
+        return True
+
     if len(parts) != 2:
         return False
 

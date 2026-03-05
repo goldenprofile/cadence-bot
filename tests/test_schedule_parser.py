@@ -28,6 +28,24 @@ SUN = dt(6, 9, 0)
 # should_fire
 # ---------------------------------------------------------------------------
 
+class TestShouldFireHourly:
+    def test_fires_at_top_of_hour(self):
+        assert should_fire("hourly", dt(0, 9, 0)) is True
+
+    def test_fires_every_hour(self):
+        for hour in range(24):
+            assert should_fire("hourly", dt(0, hour, 0)) is True
+
+    def test_does_not_fire_mid_hour(self):
+        assert should_fire("hourly", dt(0, 9, 1)) is False
+        assert should_fire("hourly", dt(0, 9, 30)) is False
+        assert should_fire("hourly", dt(0, 9, 59)) is False
+
+    def test_case_insensitive(self):
+        assert should_fire("HOURLY", dt(0, 9, 0)) is True
+        assert should_fire("hourly", dt(0, 9, 0)) is True
+
+
 class TestShouldFireDaily:
     def test_fires_on_matching_time(self):
         assert should_fire("daily 09:00", MON) is True
@@ -103,6 +121,8 @@ class TestShouldFireEdgeCases:
 
 class TestIsValidSchedule:
     @pytest.mark.parametrize("schedule", [
+        "hourly",
+        "HOURLY",
         "daily 09:00",
         "DAILY 09:00",
         "MON 09:00",

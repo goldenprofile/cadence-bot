@@ -11,6 +11,7 @@ HELP_TEXT = (
     "/delete <id> — удалить напоминание\n"
     "/help — эта справка\n\n"
     "Форматы расписания:\n"
+    "  hourly\n"
     "  daily 09:00\n"
     "  FRI 18:00\n"
     "  MON,WED,FRI 09:00\n\n"
