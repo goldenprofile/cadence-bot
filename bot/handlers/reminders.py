@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from bot.db import connection as db
-from bot.db.reminders import add_reminder, delete_reminder, list_reminders
+from bot.db.reminders import add_reminder, delete_reminder, list_reminders, toggle_reminder
 from bot.services.schedule_parser import is_valid_schedule
 
 router = Router(name="reminders")
@@ -83,3 +83,24 @@ async def cmd_delete(message: Message) -> None:
         await message.answer(f"Напоминание {args} удалено.")
     else:
         await message.answer(f"Напоминание {args} не найдено.")
+
+
+@router.message(Command("toggle"))
+async def cmd_toggle(message: Message) -> None:
+    """Usage: /toggle <id>"""
+    args = (message.text or "").removeprefix("/toggle").strip()
+    if not args.isdigit():
+        await message.answer("Формат: /toggle <id>\nПример: /toggle 3")
+        return
+
+    async with db.get_db() as conn:
+        reminder = await toggle_reminder(
+            conn, reminder_id=int(args), chat_id=message.chat.id
+        )
+
+    if reminder is None:
+        await message.answer(f"Напоминание {args} не найдено.")
+        return
+
+    status = "включено" if reminder.enabled else "выключено"
+    await message.answer(f"Напоминание [{reminder.id}] {reminder.title} — {status}.")

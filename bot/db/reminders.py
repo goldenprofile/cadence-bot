@@ -45,6 +45,33 @@ async def list_all_enabled(conn: aiosqlite.Connection) -> list[Reminder]:
     return [_row_to_reminder(r) for r in rows]
 
 
+async def toggle_reminder(
+    conn: aiosqlite.Connection, *, reminder_id: int, chat_id: int
+) -> Reminder | None:
+    """Flip enabled flag. Returns updated reminder, or None if not found."""
+    rows = await conn.execute_fetchall(
+        "SELECT * FROM reminders WHERE id = ? AND chat_id = ?",
+        (reminder_id, chat_id),
+    )
+    if not rows:
+        return None
+    reminder = _row_to_reminder(rows[0])
+    new_enabled = 0 if reminder.enabled else 1
+    await conn.execute(
+        "UPDATE reminders SET enabled = ? WHERE id = ?",
+        (new_enabled, reminder_id),
+    )
+    await conn.commit()
+    return Reminder(
+        id=reminder.id,
+        title=reminder.title,
+        schedule=reminder.schedule,
+        chat_id=reminder.chat_id,
+        enabled=bool(new_enabled),
+        created_at=reminder.created_at,
+    )
+
+
 async def delete_reminder(
     conn: aiosqlite.Connection, *, reminder_id: int, chat_id: int
 ) -> bool:
