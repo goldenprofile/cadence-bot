@@ -1,0 +1,20 @@
+[project]
+name = "cadence-bot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "aiogram>=3.26.0",
+    "aiogram-dialog>=2.5.0",
+    "aiosqlite>=0.22.1",
+    "python-dotenv>=1.2.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
