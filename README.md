@@ -23,6 +23,7 @@ uv run python main.py
 | `/add <title> \| <schedule>` | Add a reminder |
 | `/list` | Show all reminders |
 | `/delete <id>` | Delete a reminder |
+| `/toggle <id>` | Enable / disable a reminder |
 | `/help` | Show help |
 
 ## Schedule formats
